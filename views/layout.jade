@@ -1,0 +1,44 @@
+doctype html
+html(lang='en')
+head
+	meta(charset="utf-8")
+	title Clicking Game
+	
+body
+	block content
+	
+	script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1-rc2/jquery.min.js")
+	script(src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js")
+	script(type="text/javascript").
+		window.onload = function() {
+ 
+			var welcome = document.getElementById("welcome");
+			var allUsers = document.getElementById("users");
+			var progress = document.getElementById("progress");
+			var results = document.getElementById("results");
+			
+			var socket = io.connect('http://localhost:6950');
+			socket.on('welcome', function (data) {
+				console.log(data);
+				welcome.innerHTML = "Welcome to the game <strong>" + data.name + "</strong>";
+			});
+			socket.on('users', function (data) {
+				allUsers.innerHTML = "<strong>Users:</strong>" + data.users;
+			});
+			socket.on('update', function (data) {
+				progress.innerHTML = data.currentWidth;
+				progress.style.width = parseInt(data.currentWidth) + "px";
+			});
+			socket.on('win', function (data) {
+				results.innerHTML = data.message;
+			});
+			
+			progress.onclick = function() {
+				socket.emit("click");
+			}
+			
+		}
+
+	//- script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1-rc2/jquery.min.js")
+	//- script(src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js")
+	//- script(src="/main.js")
